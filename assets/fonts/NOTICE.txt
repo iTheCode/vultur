@@ -1,0 +1,11 @@
+Luckiest Guy Regular
+Copyright (c) 2010 by Brian J. Bonislawsky DBA Astigmatic (AOETI).
+All rights reserved. Available under the Apache License, Version 2.0.
+The unmodified font and its license were obtained from Google Fonts:
+https://github.com/google/fonts/tree/main/apache/luckiestguy
+
+Font SHA-256:
+cfbdd68a039f92df51cf3721506af6242e64594c6325fe0bedbeff3fe385d980
+
+This is a similar cartoon display font, not the official Cuphead typeface.
+This license covers the font only, not FindNote's code or background image.

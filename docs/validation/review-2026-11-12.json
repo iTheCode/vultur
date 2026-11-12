@@ -1,0 +1,73 @@
+{
+  "started_utc": "2026-11-12T21:09:58.056012+00:00",
+  "finished_utc": "2026-11-12T21:09:59.736202+00:00",
+  "architecture": "macOS arm64",
+  "source_sha256": {
+    "CMakeLists.txt": "d9971e7f0f4463f9345eddd343408fe1086ddce72076927262725a02b9663027",
+    "README.md": "8319ab834d1c7a9acbfc52dac53c6b366caf93ee3567d4d74f21f5a892a1aa18",
+    "Source/Effects.cpp": "3f4a067d13895ac44d436f892d3cbff367c903f8b19096db9e91d31a090da0c8",
+    "Source/Effects.h": "ed6964e8f979131fdebac23fb2daab28452f440486989fb981044cd72a38a5e5",
+    "Source/PluginEditor.cpp": "20252d6f8f54b387453fe85df0e776a65bdb37cba1d60ae5cc46da173fc44a84",
+    "Source/PluginEditor.h": "86f40f65425e571faa0f7486e4dc14434b9278441340ed1f7a15ad9775780b8f",
+    "Source/PluginProcessor.cpp": "6044cb588147319f1c9a83ad18cdf9ba74ef0776c233653b9cfbb9ee80eeb293",
+    "Source/PluginProcessor.h": "70f08544270c6e617a5cde743982071e6ac309a4ae48ebbd517cc69b5097314b",
+    "Tests/Preview.cpp": "e7bb41aaac5fcd8b4ebf1de08e1f337b2eeefed4e15832951c70f437bd0ad187",
+    "Tests/ProcessorTests.cpp": "fd8d6b698f56aff89ca4716594cb6cf3a9a9a584a55aec0cd3874a647c32c628",
+    "Tests/ReviewTests.cpp": "da0d1f2054168f1e8f474404b7bb25d12f4b39d079147b0293e0d5cd8d96c338",
+    "assets/cuphead.jpg": "6c8dc0ece91c1ea69e27c70b2c88b4195931b1dbe770cc689b1cfa3d450973a9",
+    "assets/fonts/LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "assets/fonts/LuckiestGuy-Regular.ttf": "cfbdd68a039f92df51cf3721506af6242e64594c6325fe0bedbeff3fe385d980",
+    "assets/fonts/NOTICE.txt": "cc0041950e6f89b6d94034bb130656dc658ffb896f0120a0ccf5a5f66fe42949",
+    "scripts/build.sh": "d1b7eb4cf30e6f8e2cd947c0a897122b7c5154813ad4b450b6528afa7486c4d1"
+  },
+  "binary_sha256": {
+    "build/vultur_tests": "859801865c59b36490f951e58c6f4f4549343d199368727dd60e90a2837127c7",
+    "build/vultur_review_tests": "10a920aea0a32d32a375885ab751faff722beeb4ea83ebac3a94d1d5640b00d0",
+    "build/Vultur_artefacts/Release/VST3/Vultur.vst3/Contents/MacOS/Vultur": "3f2f69d07430f4c277bcc57d46fda428e3c6ee1f12e3fd40ff7497d5e49f45f7",
+    "build/Vultur_artefacts/Release/AU/Vultur.component/Contents/MacOS/Vultur": "eff7d2e7af0f2a0f96e00de537ffa0550ef3111ec7bd87a70bd7ca0b113f4e34",
+    "build/Vultur_artefacts/Release/Standalone/Vultur.app/Contents/MacOS/Vultur": "3c8fb6ee49ad426e4aff60e0df02c29dd63c3f85bb82bb3558cb8f69b22a9837",
+    "build/VulturPreview_artefacts/Release/Vultur Preview.app/Contents/MacOS/Vultur Preview": "b5762db6585d689d5fd84a2f09879eade7f378be4349e1dc89e46977398033ad"
+  },
+  "preview_sha256": {
+    "docs/images/vultur.png": "f299e179ecfa19e92880e0b97859c92b7bc5e99a96760b56169294a7344ac444"
+  },
+  "ctest": {
+    "command": [
+      "/Users/luis/Projects/Personal/findnote/.tools/venv/bin/ctest",
+      "--test-dir",
+      "build",
+      "-C",
+      "Release",
+      "--output-on-failure",
+      "--output-junit",
+      "review-tests.xml"
+    ],
+    "exit_code": 0,
+    "stdout": "Test project /Users/luis/Projects/Personal/vultur/build\n    Start 1: audio_and_state\n1/2 Test #1: audio_and_state ..................   Passed    0.55 sec\n    Start 2: review_regressions\n2/2 Test #2: review_regressions ...............   Passed    0.68 sec\n\n100% tests passed, 0 tests failed out of 2\n\nTotal Test time (real) =   1.24 sec\n",
+    "log": "Start testing: Nov 12 16:09 -05\n----------------------------------------------------------\n1/2 Testing: audio_and_state\n1/2 Test: audio_and_state\nCommand: \"/Users/luis/Projects/Personal/vultur/build/vultur_tests\"\nDirectory: /Users/luis/Projects/Personal/vultur/build\n\"audio_and_state\" start time: Nov 12 16:09 -05\nOutput:\n----------------------------------------------------------\nPASS: 13624 checks; 4 sample rates, mono/stereo, 10 scenes, 3 releases, bounds, bypass, state, tempo, echo timing, kill, silence, lifecycle\n<end of output>\nTest time =   0.55 sec\n----------------------------------------------------------\nTest Passed.\n\"audio_and_state\" end time: Nov 12 16:09 -05\n\"audio_and_state\" time elapsed: 00:00:00\n----------------------------------------------------------\n\n2/2 Testing: review_regressions\n2/2 Test: review_regressions\nCommand: \"/Users/luis/Projects/Personal/vultur/build/vultur_review_tests\"\nDirectory: /Users/luis/Projects/Personal/vultur/build\n\"review_regressions\" start time: Nov 12 16:09 -05\nOutput:\n----------------------------------------------------------\nKill rate=44100 channels=1 band=0 hz=60 dB=-55.9361\nKill rate=44100 channels=1 band=1 hz=900 dB=-33.118\nKill rate=44100 channels=1 band=2 hz=12000 dB=-60.3945\nKill rate=44100 channels=2 band=0 hz=60 dB=-55.9361\nKill rate=44100 channels=2 band=1 hz=900 dB=-33.118\nKill rate=44100 channels=2 band=2 hz=12000 dB=-60.3945\nSpectral changes rate=44100 noise bright/dark=7.63706 reverb down/up=0.131694\nKill rate=48000 channels=1 band=0 hz=60 dB=-55.9343\nKill rate=48000 channels=1 band=1 hz=900 dB=-33.0851\nKill rate=48000 channels=1 band=2 hz=12000 dB=-58.5718\nKill rate=48000 channels=2 band=0 hz=60 dB=-55.9343\nKill rate=48000 channels=2 band=1 hz=900 dB=-33.0851\nKill rate=48000 channels=2 band=2 hz=12000 dB=-58.5718\nSpectral changes rate=48000 noise bright/dark=7.99658 reverb down/up=0.1215\nKill rate=96000 channels=1 band=0 hz=60 dB=-55.9315\nKill rate=96000 channels=1 band=1 hz=900 dB=-32.9516\nKill rate=96000 channels=1 band=2 hz=12000 dB=-52.3375\nKill rate=96000 channels=2 band=0 hz=60 dB=-55.9315\nKill rate=96000 channels=2 band=1 hz=900 dB=-32.9516\nKill rate=96000 channels=2 band=2 hz=12000 dB=-52.3375\nSpectral changes rate=96000 noise bright/dark=10.9667 reverb down/up=0.063476\nKill rate=192000 channels=1 band=0 hz=60 dB=-55.9335\nKill rate=192000 channels=1 band=1 hz=900 dB=-32.9183\nKill rate=192000 channels=1 band=2 hz=12000 dB=-51.0114\nKill rate=192000 channels=2 band=0 hz=60 dB=-55.9335\nKill rate=192000 channels=2 band=1 hz=900 dB=-32.9183\nKill rate=192000 channels=2 band=2 hz=12000 dB=-51.0114\nSpectral changes rate=192000 noise bright/dark=13.2366 reverb down/up=0.0328048\nEcho tail after 10 seconds: -19.9266 dBFS\nPASS: review regressions (158 checks)\n<end of output>\nTest time =   0.68 sec\n----------------------------------------------------------\nTest Passed.\n\"review_regressions\" end time: Nov 12 16:09 -05\n\"review_regressions\" time elapsed: 00:00:00\n----------------------------------------------------------\n\nEnd testing: Nov 12 16:09 -05\n"
+  },
+  "baseline_before_fix": "Kill rate=44100 channels=1 band=0 hz=60 dB=-14.336\nFAIL: Single-band kill is too shallow\n",
+  "signatures": {
+    "build/Vultur_artefacts/Release/VST3/Vultur.vst3": {
+      "exit_code": 0,
+      "output": ""
+    },
+    "build/Vultur_artefacts/Release/AU/Vultur.component": {
+      "exit_code": 0,
+      "output": ""
+    },
+    "build/Vultur_artefacts/Release/Standalone/Vultur.app": {
+      "exit_code": 0,
+      "output": ""
+    },
+    "build/VulturPreview_artefacts/Release/Vultur Preview.app": {
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "limitations": [
+    "No listening test with real music",
+    "No Ableton/Logic host validation",
+    "No exact RMX-1000 emulation claim"
+  ]
+}
