@@ -66,7 +66,47 @@ open "build/Vultur_artefacts/Release/Standalone/Vultur.app"
 
 El preview se captura con el editor JUCE real, a resolución doble. No es un mockup HTML. El generador usa el preset Tech House para mostrar la posición de los controles; al insertar una instancia nueva del plugin, la intensidad empieza en cero.
 
-## Validación
+## GitHub Actions y releases
+
+El workflow [`.github/workflows/build-release.yml`](.github/workflows/build-release.yml) sigue el esquema de FindNote:
+
+1. En PR, push a `main` o ejecución manual, instala las dependencias fijadas y ejecuta las pruebas de release. El planificador calcula la próxima versión con semantic-release en **dry-run**; PR y ejecuciones manuales usan `0.0.0` y no publican.
+2. Compila y ejecuta CTest en **macOS Apple Silicon (`macos-15`), macOS Intel (`macos-15-intel`) y Windows x64 (`windows-2022`)**, con los [runners oficiales de GitHub](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job). Cada plataforma ejecuta también las pruebas del empaquetador.
+3. Genera ZIP, SHA-256 y metadatos de versión/commit como artifacts `plugins-<plataforma>`, conservados durante 14 días. macOS incluye **VST3 + AU + Standalone**; Windows incluye **VST3 + Standalone**. El preview visual no se compila ni abre en CI.
+4. **Un push futuro a `main` con cambios publicables crea automáticamente el tag y la GitHub Release**, solo después de que pasen las tres compilaciones y se verifiquen versión, commit, formatos y checksums. Una PR o ejecución manual nunca publica.
+
+Los archivos de release son `Vultur-X.Y.Z-macOS-arm64.zip`, `Vultur-X.Y.Z-macOS-x86_64.zip` y `Vultur-X.Y.Z-windows-x64.zip`, más sus checksums. Cada ZIP conserva los avisos de la fuente en `licenses/fonts/`. El script rechaza paquetes ya existentes; puedes elegir otra carpeta con `--dist-dir`.
+
+La versión se integra mediante `VULTUR_VERSION` en CMake. `feat:` incrementa minor; `fix:` y `perf:` incrementan patch; `BREAKING CHANGE` o `!` incrementan major. `ci:`, `docs:` y `chore:` no generan versión por sí solos. Sin tags previos, la primera versión publicable es `1.0.0`.
+
+Se usa Node 24 y `npm ci --ignore-scripts`, con lockfile y acciones fijadas por SHA. `GITHUB_TOKEN` es el token automático; planificación y publicación piden `contents: write` (semantic-release comprueba acceso de push incluso en dry-run). Los builds usan lectura. No se publica en npm ni se instalan plugins. macOS usa firma ad hoc; no hay notarización ni firma de distribución de Windows.
+
+Desde la raíz de `vultur`, con Node ≥24.10 y npm, para probar el versionado y la verificación de paquetes sin publicar:
+
+```bash
+npm ci --ignore-scripts
+npm run test:release
+```
+
+Desde la raíz, con Python 3 y CMake ≥3.22, para crear un paquete local de macOS Apple Silicon (con Xcode y una carpeta de salida sin esa versión):
+
+```bash
+python3 scripts/build.py --version 0.1.0 --arch arm64 --build-dir build-ci-arm64 --dist-dir dist/local --package
+```
+
+En Windows, desde la raíz en PowerShell, con Python 3, CMake y Visual Studio 2022 con Desktop development with C++:
+
+```powershell
+python scripts/build.py --version 0.1.0 --arch x86_64 --build-dir build-windows --dist-dir dist/local --package
+```
+
+`scripts/build.sh` sigue siendo el flujo local para compilar y generar la captura del preview. `scripts/build.py` es el flujo sin interfaz usado por CI. Ambos ejecutan las dos suites de audio; las pruebas de release están en `Tests/ReleaseTests.mjs` y las del empaquetador en `Tests/BuildToolsTests.py`.
+
+Validación local de este flujo: actionlint correcto, **21 pruebas de release y 5 del empaquetador correctas**, compilación nativa arm64 con la versión de prueba `1.2.3` y ambas suites CTest correctas. Se generó `dist/ci-check/Vultur-1.2.3-macOS-arm64.zip` y se verificaron su checksum, contenido, licencias, versión integrada, arquitectura y firmas después de extraerlo. Esa versión es una comprobación local, no un tag ni una release publicada.
+
+Las dependencias de release mantienen las versiones fijadas de FindNote. La auditoría local de npm detecta avisos moderados transitivos en [glob](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) y [minimatch](https://github.com/advisories/GHSA-g3hv-75wg-m249); no se ha forzado un cambio de versión mayor de esas dependencias. El primer workflow remoto, las compilaciones nativas Intel/Windows y una publicación real siguen pendientes; configurar el workflow no demuestra que ya se haya ejecutado en GitHub.
+
+## Validación del motor y la interfaz
 
 Validación de la revisión del 12 de noviembre de 2026: VST3, AU y Standalone recompilados en macOS arm64. CTest pasó **las dos suites**: 13 624 comprobaciones de audio/estado y 158 de regresión de la revisión. Se regeneró y revisó visualmente el preview con la imagen de fondo a pantalla completa y paneles translúcidos. La compilación firma los bundles ad hoc y comprueba su integridad al finalizar.
 

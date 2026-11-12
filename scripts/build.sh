@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 cmake_bin="${CMAKE_BIN:-cmake}"
-configure=(-S . -B build -DCMAKE_BUILD_TYPE=Release)
+configure=(-S . -B build -DCMAKE_BUILD_TYPE=Release -DVULTUR_BUILD_PREVIEW=ON)
 if [[ -n "${JUCE_SOURCE:-}" ]]; then
     configure+=("-DFETCHCONTENT_SOURCE_DIR_JUCE=$JUCE_SOURCE")
 fi

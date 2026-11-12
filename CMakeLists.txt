@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
-project(Vultur VERSION 0.1.0 LANGUAGES C CXX)
+set(VULTUR_VERSION "0.1.0" CACHE STRING "Version embedded in the plugin")
+project(Vultur VERSION ${VULTUR_VERSION} LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS")
 include(CTest)
+option(VULTUR_BUILD_PREVIEW "Build the interactive UI preview" ON)
 include(FetchContent)
 FetchContent_Declare(JUCE
     GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
@@ -45,7 +47,9 @@ if(BUILD_TESTING)
     target_compile_definitions(vultur_review_tests PRIVATE $<TARGET_PROPERTY:Vultur,COMPILE_DEFINITIONS>)
     target_link_libraries(vultur_review_tests PRIVATE Vultur)
     add_test(NAME review_regressions COMMAND vultur_review_tests)
-    add_executable(VulturPreview MACOSX_BUNDLE)
+endif()
+if(VULTUR_BUILD_PREVIEW)
+    add_executable(VulturPreview WIN32 MACOSX_BUNDLE)
     set_target_properties(VulturPreview PROPERTIES OUTPUT_NAME "Vultur Preview"
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/VulturPreview_artefacts/$<CONFIG>"
         MACOSX_BUNDLE_GUI_IDENTIFIER "audio.vultur.preview")

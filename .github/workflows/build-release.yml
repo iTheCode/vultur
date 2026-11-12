@@ -1,0 +1,103 @@
+name: Build and release plugins
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vultur-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Plan version (no publication)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      # semantic-release verifies push access even during a dry-run.
+      contents: write
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      publish: ${{ steps.plan.outputs.publish }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run test:release
+      - id: plan
+        name: Calculate version without creating tags
+        run: node scripts/plan-release.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: Build and test (${{ matrix.platform }})
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+            platform: macOS-arm64
+          - os: macos-15-intel
+            arch: x86_64
+            platform: macOS-x86_64
+          - os: windows-2022
+            arch: x86_64
+            platform: windows-x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test packaging safeguards
+        run: python -m unittest discover -s Tests -p '*Tests.py' -v
+      - name: Build, test, verify and package native plugins
+        run: python scripts/build.py --version "${{ needs.version.outputs.version }}" --arch "${{ matrix.arch }}" --package
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: plugins-${{ matrix.platform }}
+          path: dist/Vultur-*
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Publish verified native packages
+    needs: [version, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.version.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: plugins-*
+          path: dist
+          merge-multiple: true
+      - name: Verify exact version and commit before creating tag and release
+        run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
