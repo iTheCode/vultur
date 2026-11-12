@@ -60,3 +60,17 @@ class BuildToolsTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MacSigningTests(unittest.TestCase):
+    def test_no_identity_means_ad_hoc(self):
+        with patch.dict(builder.os.environ, {}, clear=True):
+            self.assertIsNone(builder.macos_signing())
+
+    def test_identity_requires_developer_id_and_notary_credentials(self):
+        with patch.dict(builder.os.environ, {'MACOS_SIGN_IDENTITY': 'Apple Distribution: X (T)'}, clear=True):
+            with self.assertRaisesRegex(ValueError, 'Developer ID'):
+                builder.macos_signing()
+        with patch.dict(builder.os.environ, {'MACOS_SIGN_IDENTITY': 'Developer ID Application: X (T)'}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, 'ASC_ISSUER_ID'):
+                builder.macos_signing()
